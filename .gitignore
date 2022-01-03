@@ -1,1 +1,4 @@
 src/vendor
+.DS_Store
+*.jpg
+*.png
