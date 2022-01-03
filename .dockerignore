@@ -1,0 +1,7 @@
+.git
+README.md
+build*.sh
+dev.sh
+run.sh
+*.env
+Dockerfile*

@@ -1,0 +1,15 @@
+FROM golang:1.17-alpine
+
+ENV META_S_PATH=/home/server
+ENV PS1="[ \w ] \\$ "
+
+RUN apk update && apk upgrade &&\
+    apk add \
+    bash \
+    exiftool
+
+WORKDIR ${META_S_PATH}
+
+COPY setup.sh /usr/local/bin/setup
+
+CMD [ "bash" ]
