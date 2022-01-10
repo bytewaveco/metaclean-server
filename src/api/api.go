@@ -77,11 +77,11 @@ func DownloadFiles(c *gin.Context) {
 	uuid, ok := c.GetQuery("uuid")
 
 	if ok {
-		filesFolder := filepath.Join("/tmp/MetaClean/files", fmt.Sprintf("%s.zip", uuid))
-		_, filesExistError := os.Stat(filesFolder)
+		filesZip := filepath.Join("/tmp/MetaClean/files", fmt.Sprintf("%s.zip", uuid))
+		_, filesExistError := os.Stat(filesZip)
 
 		if filesExistError == nil {
-			c.File(filesFolder)
+			c.FileAttachment(filesZip, "metacleaned.zip")
 		} else {
 			c.AbortWithStatus(http.StatusNotFound)
 		}
