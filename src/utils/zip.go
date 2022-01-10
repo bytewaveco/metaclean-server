@@ -8,44 +8,51 @@ import (
 )
 
 func Zip(input, output string) error {
-	file, err := os.Create(output)
+	f, err := os.Create(output)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer f.Close()
 
-	w := zip.NewWriter(file)
-	defer w.Close()
+	writer := zip.NewWriter(f)
+	defer writer.Close()
 
-	err = filepath.Walk(input, func(path string, info os.FileInfo, err error) error {
+	return filepath.Walk(input, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
+		}
+
+		header.Method = zip.Deflate
+
+		header.Name, err = filepath.Rel(filepath.Dir(input), path)
 		if err != nil {
 			return err
 		}
 		if info.IsDir() {
+			header.Name += "/"
+		}
+
+		headerWriter, err := writer.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
 			return nil
 		}
-		file, err := os.Open(path)
+
+		f, err := os.Open(path)
 		if err != nil {
 			return err
 		}
-		defer file.Close()
+		defer f.Close()
 
-		f, err := w.Create(path)
-		if err != nil {
-			return err
-		}
-
-		_, err = io.Copy(f, file)
-		if err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	if err != nil {
+		_, err = io.Copy(headerWriter, f)
 		return err
-	}
-
-	return nil
+	})
 }

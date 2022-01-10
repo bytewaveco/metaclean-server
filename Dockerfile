@@ -1,7 +1,7 @@
 FROM golang:1.17-alpine
 
 ENV META_S_HOST="0.0.0.0"
-ENV META_S_PORT="3333"
+ENV META_S_PORT="80"
 
 RUN apk update && apk upgrade &&\
     apk add \
